@@ -59,7 +59,10 @@ export function buildQuery(c) {
  */
 export async function geocodeAddress(c) {
   const cidade = c.cidade || 'Teresina - PI';
-  const end = String(c.endereco || '').replace(/\(.*?\)/g, ' ').replace(/\b(s\/n|sn|n[ºo°.]?)\s*$/i, '').trim();
+  // Limpa complementos que o Nominatim não entende: (Shopping X), "- Lj 35", sala, box, CEP etc.
+  const end = String(c.endereco || '').replace(/\(.*?\)/g, ' ').replace(/\b\d{5}-?\d{3}\b/g, ' ')
+    .replace(/[-–,]?\s*\b(lj|loja|sl|sala|box|quiosque|andar|apto?|bloco|galeria)\b\.?\s*\w*/gi, ' ')
+    .replace(/\b(s\/n|sn|n[ºo°.]?)\s*$/i, '').replace(/[\s,-]+$/g, '').replace(/\s{2,}/g, ' ').trim();
   const semNum = end.replace(/[,\s-]*\b(n[ºo°.]?\s*)?\d+[a-z]?\s*$/i, '').trim();
   const tries = [];
   if (end) tries.push([[end, c.bairro, cidade, 'Brasil'], 'endereço']);
