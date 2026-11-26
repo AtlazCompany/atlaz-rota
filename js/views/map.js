@@ -51,7 +51,11 @@ export function render(root) {
     const pend = pendingGeocodeCount();
     const aReceber = s.clients.reduce((a, c) => a + (+c.aReceber || 0), 0);
     $('#map-sub').textContent = `${s.clients.length} loja(s)${aReceber ? ' · a receber ' + brl(aReceber) : ''}`;
-    $('#map-notes').innerHTML = sem ? `<div class="banner warn">${icon('warn', 18)}<span>${sem} loja(s) sem localização no mapa.</span>${pend ? `<button class="btn sm" id="b-geo">${busy ? 'Localizando…' : 'Localizar pelo endereço'}</button>` : '<span class="hint">Edite a loja para informar a posição.</span>'}</div>` : '';
+    const aprox = s.clients.filter((c) => c.lat != null && c.geoPrec);
+    const semList = s.clients.filter((c) => c.lat == null);
+    const row = (c, txt) => `<div class="banner warn">${icon('warn', 18)}<span><b>${esc(c.loja)}</b> ${txt}</span><button class="btn sm" data-fix="${esc(c.id)}">Editar</button></div>`;
+    $('#map-notes').innerHTML = (sem ? `<div class="banner warn">${icon('warn', 18)}<span>${sem} loja(s) sem localização no mapa.</span>${pend ? `<button class="btn sm" id="b-geo">${busy ? 'Localizando…' : 'Localizar pelo endereço'}</button>` : ''}</div>` + semList.map((c) => row(c, 'sem localização')).join('') : '')
+      + aprox.map((c) => row(c, `posição aproximada (${c.geoPrec === 'bairro' ? 'só o bairro' : 'só a rua'}): confira no mapa`)).join('');
     // pinos
     cluster.clearLayers();
     const vis = spread(all.filter((p) => !filters.size || filters.has(p.situacao)));
@@ -70,6 +74,8 @@ export function render(root) {
   root.addEventListener('click', async (e) => {
     const chip = e.target.closest('[data-sit]');
     if (chip) { const k = chip.dataset.sit; filters.has(k) ? filters.delete(k) : filters.add(k); draw(); return; }
+    const fix = e.target.closest('[data-fix]');
+    if (fix) return clientForm({ client: get().clients.find((c) => c.id === fix.dataset.fix), pick: startPick });
     if (e.target.closest('#t-sug')) { showSug = !showSug; draw(); return; }
     if (e.target.closest('#b-add') || e.target.closest('#e-add')) return add();
     if (e.target.closest('#e-demo')) { replaceAll(EXEMPLO()); fitted = false; toast('Dados fictícios carregados.', 'ok'); return; }

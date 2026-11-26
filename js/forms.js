@@ -66,13 +66,14 @@ export function clientForm({ client, defaults = {}, pick, onSaved } = {}) {
     if (v == null) return toast('Informe o pedido (ex.: 2 × Placa NFC) e tenha preços cadastrados.', 'error');
     f.elements.aReceber.value = String(v).replace('.', ',');
   };
+  let geoPrec = null; // null = posição não buscada nesta edição
   const doGeo = async () => {
     if (!val('endereco') && !val('bairro')) { msg('Preencha o endereço.', true); return false; }
     msg('Buscando…');
     try {
       const r = await geocodeAddress({ endereco: val('endereco'), bairro: val('bairro'), cidade: val('cidade') });
       if (!r) { msg('Não encontrei. Digite as coordenadas' + (pick ? ' ou marque no mapa.' : '.'), true); return false; }
-      f.elements.lat.value = r.lat.toFixed(6); f.elements.lng.value = r.lng.toFixed(6);
+      f.elements.lat.value = r.lat.toFixed(6); f.elements.lng.value = r.lng.toFixed(6); geoPrec = r.precisao === 'endereço' ? '' : r.precisao;
       msg(r.precisao === 'endereço' ? 'Localização encontrada.' : `Achei só a ${r.precisao === 'rua' ? 'rua' : 'região do bairro'} (posição aproximada)${pick ? ': ajuste marcando no mapa.' : '.'}`); return true;
     } catch { msg('Falha ao consultar o Nominatim (internet?).', true); return false; }
   };
@@ -94,6 +95,7 @@ export function clientForm({ client, defaults = {}, pick, onSaved } = {}) {
       lat: val('lat') ? parseFloat(val('lat').replace(',', '.')) : null, lng: val('lng') ? parseFloat(val('lng').replace(',', '.')) : null,
     };
     if (isNaN(out.lat) || isNaN(out.lng)) { out.lat = out.lng = null; }
+    if (out.lat !== c.lat || out.lng !== c.lng) out.geoPrec = geoPrec || ''; // posição mudou: manual = precisa; busca = guarda a precisão
     if (out.situacao !== prev) out.ultimaAcao = today();
     // Renomear loja: mantém o vínculo com as vendas existentes.
     if (editing && norm(c.loja) !== norm(out.loja)) get().sales.forEach((s) => { if (norm(s.loja) === norm(c.loja)) s.loja = out.loja; });

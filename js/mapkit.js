@@ -98,7 +98,7 @@ export async function geocodePending(onProgress) {
     onProgress?.(i + 1, todo.length, c.loja);
     try {
       const r = await geocodeAddress(c);
-      if (r) { mutate((s) => { const x = s.clients.find((y) => y.id === c.id); if (x) { x.lat = r.lat; x.lng = r.lng; } }, { silent: i < todo.length - 1 }); ok++; } else fail++;
+      if (r) { mutate((s) => { const x = s.clients.find((y) => y.id === c.id); if (x) { x.lat = r.lat; x.lng = r.lng; x.geoPrec = r.precisao === 'endereço' ? '' : r.precisao; } }, { silent: i < todo.length - 1 }); ok++; } else fail++;
     } catch { fail++; await sleep(500); }
   }
   return { ok, fail, total: todo.length };
