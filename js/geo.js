@@ -57,8 +57,17 @@ export function buildQuery(c) {
  * endereço completo → sem número → só rua+cidade → bairro+cidade.
  * Retorna {lat,lng,precisao:'endereço'|'rua'|'bairro'} ou null.
  */
+/** Cidade citada no próprio endereço (ex.: "..., Timon - MA, 65630-030"); vale mais que o campo Cidade, que na planilha não existe. */
+export function cityFromAddress(end) {
+  const t = String(end || '');
+  const m = /,\s*([^,]+?)\s*-\s*([A-Z]{2})\b\s*(?:,.*)?$/.exec(t);
+  if (m && !/\d/.test(m[1])) return `${m[1].trim()} - ${m[2]}`;
+  if (/\btimon\b/i.test(t)) return 'Timon - MA';
+  return '';
+}
+
 export async function geocodeAddress(c) {
-  const cidade = c.cidade || 'Teresina - PI';
+  const cidade = cityFromAddress(c.endereco) || c.cidade || 'Teresina - PI';
   // Limpa complementos que o Nominatim não entende: (Shopping X), "- Lj 35", sala, box, CEP etc.
   const end = String(c.endereco || '').replace(/\(.*?\)/g, ' ').replace(/\b\d{5}-?\d{3}\b/g, ' ')
     .replace(/[-–,]?\s*\b(lj|loja|sl|sala|box|quiosque|andar|apto?|bloco|galeria)\b\.?\s*\w*/gi, ' ')
