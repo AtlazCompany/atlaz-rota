@@ -16,7 +16,7 @@ var SHEET_VENDAS = 'Vendas';
 function doGet(e) {
   try {
     checkToken_(e && e.parameter && e.parameter.token);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = openSheet_();
     return json_({ ok: true, clientes: readClientes_(ss), vendas: readVendas_(ss) });
   } catch (err) { return json_({ ok: false, error: String(err.message || err) }); }
 }
@@ -27,7 +27,7 @@ function doPost(e) {
     var body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
     checkToken_(body.token);
     if (!lock.tryLock(20000)) throw new Error('Planilha ocupada. Tente de novo em instantes.');
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = openSheet_();
     var out = { ok: true };
     out.clientes = upsertClientes_(ss, body.clientes || []);
     out.vendas = appendVendas_(ss, body.vendas || []);
@@ -35,6 +35,13 @@ function doPost(e) {
     return json_(out);
   } catch (err) { return json_({ ok: false, error: String(err.message || err) }); }
   finally { try { lock.releaseLock(); } catch (x) {} }
+}
+
+// ---------- planilha ----------
+/** Projeto avulso: usa a propriedade SHEET_ID. Projeto aberto de dentro da planilha: usa a planilha ativa. */
+function openSheet_() {
+  var id = PropertiesService.getScriptProperties().getProperty('SHEET_ID');
+  return id ? SpreadsheetApp.openById(id) : SpreadsheetApp.getActiveSpreadsheet();
 }
 
 // ---------- segurança ----------
