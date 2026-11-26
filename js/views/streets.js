@@ -99,7 +99,7 @@ function renderDetail(root, id) {
 
   function drawMap(st, P) {
     lineLayer.clearLayers();
-    st.lines.forEach((l) => { L.polyline(l, { color: '#fff', weight: 9, opacity: 0.85 }).addTo(lineLayer); L.polyline(l, { color: '#2dd4bf', weight: 5, opacity: 1 }).addTo(lineLayer); });
+    st.lines.forEach((l) => { L.polyline(l, { color: '#fff', weight: 9, opacity: 0.85 }).addTo(lineLayer); L.polyline(l, { color: '#3b82f6', weight: 5, opacity: 1 }).addTo(lineLayer); });
     const routeIds = new Set(st.route?.ids || []);
     const routeClient = new Set(st.candidates.filter((c) => routeIds.has(c.id) && c.clientId).map((c) => c.clientId));
     const pts = [];

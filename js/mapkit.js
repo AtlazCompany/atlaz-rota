@@ -40,7 +40,7 @@ export const clusterIcon = (cluster) => L.divIcon({
   html: `<div class="cluster">${cluster.getChildCount()}</div>`,
 });
 export function makeCluster() {
-  return L.markerClusterGroup({ maxClusterRadius: 36, spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true, iconCreateFunction: clusterIcon, spiderLegPolylineOptions: { weight: 1.5, color: '#2dd4bf', opacity: 0.7 } });
+  return L.markerClusterGroup({ maxClusterRadius: 36, spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true, iconCreateFunction: clusterIcon, spiderLegPolylineOptions: { weight: 1.5, color: '#3b82f6', opacity: 0.7 } });
 }
 
 /** Afasta levemente pinos no mesmo ponto (ex.: lojas do mesmo shopping), em anel de ~9 m. */

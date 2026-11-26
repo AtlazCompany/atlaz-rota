@@ -79,7 +79,7 @@ export function render(root) {
       if (!navigator.geolocation) return toast('Geolocalização indisponível.', 'error');
       navigator.geolocation.getCurrentPosition((p) => {
         const ll = [p.coords.latitude, p.coords.longitude];
-        meLayer?.remove(); meLayer = L.circleMarker(ll, { radius: 8, color: '#fff', weight: 3, fillColor: '#2dd4bf', fillOpacity: 1 }).addTo(map);
+        meLayer?.remove(); meLayer = L.circleMarker(ll, { radius: 8, color: '#fff', weight: 3, fillColor: '#3b82f6', fillOpacity: 1 }).addTo(map);
         map.setView(ll, 16);
       }, () => toast('Não consegui sua localização (permissão negada?).', 'error'), { enableHighAccuracy: true, timeout: 10000 });
       return;

@@ -23,7 +23,7 @@ function monthChart(sales) {
   const shown = months.slice(-8), max = Math.max(...shown.map((k) => by.get(k) || 0), 1);
   const W = 420, H = 190, pad = 26, bw = (W - 2 * pad) / shown.length;
   return `<svg class="mchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Receita por mês">
-    <defs><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#14877a"/></linearGradient></defs>
+    <defs><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient></defs>
     <line x1="${pad / 2}" x2="${W - pad / 2}" y1="${H - 26}" y2="${H - 26}" stroke="var(--line)"/>
     ${shown.map((k, i) => {
       const v = by.get(k) || 0, h = Math.max(v ? 4 : 0, (v / max) * (H - 70)), x = pad + i * bw + bw * 0.18, w = bw * 0.64, yy = H - 26 - h;
