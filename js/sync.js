@@ -1,6 +1,6 @@
 // Sincronização com o Apps Script (Fase 2). URL e token: config.local.js ou Configurações (localStorage).
-import { get, mutate, getSettings, newClient, uid } from './store.js';
-import { norm, parseDate } from './util.js';
+import { get, mutate, getSettings, newClient } from './store.js';
+import { norm, parseDate, uid } from './util.js';
 import { normSituacao } from './csv.js';
 import { modal, toast } from './ui.js';
 
