@@ -1,0 +1,7 @@
+*.json
+*.csv
+*.kml
+.env
+config.local.js
+node_modules/
+shots/
